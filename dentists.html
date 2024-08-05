@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps with JSON Data</title>
+    <style>
+        /* Reset margins and paddings */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set the size of the map to take the full viewport */
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <script src="data.js"></script>    
+    <div id="map"></div>
+
+    <!-- Load the Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9mSSnRQmvZO7eozolWOpr0FRT0BJURmk&callback=initMap" async defer></script>
+
+    <script>
+        
+
+        function initMap() {
+            // Center the map on the first location in the JSON data
+            const center = { lat: jsonData[0].GeoResult.Geometry.Location.Lat, lng: jsonData[0].GeoResult.Geometry.Location.Lng };
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 7,
+                center: center
+            });
+
+            // Add markers to the map
+            jsonData.forEach(person => {
+                const location = { lat: person.GeoResult.Geometry.Location.Lat, lng: person.GeoResult.Geometry.Location.Lng };
+                const marker = new google.maps.Marker({
+                    position: location,
+                    map: map
+                });
+
+                // Create the content for the info window
+                const infoContent = `
+                    <div>
+                        <h4>${person.FirstName} ${person.LastName}</h4>
+                        <p><strong>Address:</strong> ${person.Address || 'N/A'}</p>
+                        <p><strong>City:</strong> ${person.City || 'N/A'}</p>
+                        <p><strong>ZipCode:</strong> ${person.ZipCode || 'N/A'}</p>
+                    </div>
+                `;
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: infoContent
+                });
+
+                // Show info window on click or hover
+                marker.addListener('click', () => {
+                    infoWindow.open(map, marker);
+                });
+
+                // marker.addListener('mouseover', () => {
+                //     infoWindow.open(map, marker);
+                // });
+
+                marker.addListener('mouseout', () => {
+                    infoWindow.close();
+                });
+            });
+        }
+    </script>
+
+</body>
+</html>

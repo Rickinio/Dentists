@@ -1,80 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Maps with JSON Data</title>
-    <style>
-        /* Reset margins and paddings */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+<html>
+  <head>
+    <title>Marker Clustering</title>
 
-        /* Set the size of the map to take the full viewport */
-        #map {
-            height: 100%;
-            width: 100%;
-        }
-    </style>
-</head>
-<body>
-
-    <script src="data.js"></script>    
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script src="./data.js"></script>
+    <script type="module" src="./index.js"></script>
+  </head>
+  <body>
+    <div style="position: absolute; top:100px; left:0; z-index: 99999">
+        <input type="checkbox" id="useCluster" name="useCluster">
+        <label for="useCluster"> Show Clustering</label><br>
+        <input id="search-box" type="text" placeholder="Search by name"/>
+        <input id="search-address" type="text" placeholder="Search by address"/>
+    </div>
     <div id="map"></div>
-
-    <!-- Load the Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9mSSnRQmvZO7eozolWOpr0FRT0BJURmk&callback=initMap" async defer></script>
-
-    <script>
-        
-
-        function initMap() {
-            // Center the map on the first location in the JSON data
-            const center = { lat: jsonData[0].GeoResult.Geometry.Location.Lat, lng: jsonData[0].GeoResult.Geometry.Location.Lng };
-            const map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 7,
-                center: center
-            });
-
-            // Add markers to the map
-            jsonData.forEach(person => {
-                const location = { lat: person.GeoResult.Geometry.Location.Lat, lng: person.GeoResult.Geometry.Location.Lng };
-                const marker = new google.maps.Marker({
-                    position: location,
-                    map: map
-                });
-
-                // Create the content for the info window
-                const infoContent = `
-                    <div>
-                        <h4>${person.FirstName} ${person.LastName}</h4>
-                        <p><strong>Address:</strong> ${person.Address || 'N/A'}</p>
-                        <p><strong>City:</strong> ${person.City || 'N/A'}</p>
-                        <p><strong>ZipCode:</strong> ${person.ZipCode || 'N/A'}</p>
-                    </div>
-                `;
-
-                const infoWindow = new google.maps.InfoWindow({
-                    content: infoContent
-                });
-
-                // Show info window on click or hover
-                marker.addListener('click', () => {
-                    infoWindow.open(map, marker);
-                });
-
-                // marker.addListener('mouseover', () => {
-                //     infoWindow.open(map, marker);
-                // });
-
-                marker.addListener('mouseout', () => {
-                    infoWindow.close();
-                });
-            });
-        }
-    </script>
-
-</body>
+    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <!-- prettier-ignore -->
+    <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
+        ({key: "AIzaSyD9mSSnRQmvZO7eozolWOpr0FRT0BJURmk", v: "weekly"});</script>
+  </body>
 </html>
